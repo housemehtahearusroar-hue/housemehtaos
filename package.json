@@ -9,11 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.80",
+    "@ai-sdk/react": "^3.0.199",
+    "@picovoice/porcupine-web": "^4.0.0",
+    "@supabase/supabase-js": "^2.107.0",
+    "ai": "^6.0.197",
+    "googleapis": "^173.0.0",
     "next": "16.2.7",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.65.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

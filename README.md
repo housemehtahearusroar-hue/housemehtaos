@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aura — Agentic Family Mirror
 
-## Getting Started
+Smart mirror dashboard for the Mehta family. Left panel shows live family data; right panel is Aura, your voice co-pilot.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router) on Vercel
+- **Supabase** — Postgres, Realtime (`postgres_changes` → browser), pgvector memory graph
+- **Gemini** — intent routing, tool calling, embeddings (server-only)
+- **Google Calendar / Maps** — server-only credentials via ToolExecutors
+- **Bland.ai** — outbound voice booking (server-only)
+- **Web Speech API** — "Hey Aura" hotword + STT (Porcupine optional)
+
+## Quick start
 
 ```bash
+npm install
+cp .env.example .env.local
+# Fill in Supabase + Google AI keys (minimum for local dev)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Without Supabase env vars, the app runs with seeded mock data.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a Supabase project
+2. Run migrations in order via SQL editor:
+   - `supabase/migrations/001_initial.sql`
+   - `supabase/migrations/002_memory_rpc.sql`
+3. Enable Realtime on dashboard tables (done in migration)
+4. Copy URL + anon key + service role key to `.env.local`
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+See [`.env.example`](.env.example). Sensitive keys (`GOOGLE_CALENDAR_*`, `BLAND_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) are **server-only** — never exposed to the browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Google Calendar OAuth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+GOOGLE_CALENDAR_CLIENT_ID=... GOOGLE_CALENDAR_CLIENT_SECRET=... npx tsx scripts/google-oauth.ts
+```
 
-## Deploy on Vercel
+## Porcupine wake word (optional)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Train "Hey Aura" at [Picovoice Console](https://console.picovoice.ai/)
+2. Download `.ppn` → `public/wake-word/hey-aura.ppn`
+3. Set `NEXT_PUBLIC_PICOVOICE_ACCESS_KEY`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Falls back to Web Speech API hotword detection without Porcupine.
+
+## Kiosk mode (Chromium)
+
+```bash
+chromium --kiosk --autoplay-policy=no-user-gesture-required http://localhost:3000
+```
+
+## Deploy to Vercel
+
+1. Push to GitHub
+2. Import repo in Vercel
+3. Add all env vars from `.env.example`
+4. Cron job syncs Google Calendar every 15 min (`vercel.json`)
+
+## Architecture
+
+```
+Browser → /api/aura → MemoryRetrieval (pgvector) → Gemini → ToolExecutors
+                                                          ├─ Supabase CRUD
+                                                          ├─ Google Calendar
+                                                          └─ Bland.ai
+Supabase Realtime → postgres_changes → browser widgets
+```

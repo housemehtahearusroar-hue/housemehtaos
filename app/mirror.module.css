@@ -1,0 +1,106 @@
+.toolbar {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.brand {
+  color: var(--fg);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-right: 6px;
+}
+
+.btn {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  color: var(--dim);
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s;
+  letter-spacing: 0.04em;
+}
+
+.btn:hover {
+  color: var(--fg);
+  border-color: rgba(110, 193, 255, 0.5);
+}
+
+.btnActive {
+  color: #04101c;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.mirror {
+  position: relative;
+  width: 920px;
+  max-width: 100%;
+  height: 660px;
+  max-height: 82vh;
+  background: linear-gradient(180deg, #05060a 0%, #0a0d14 100%);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 10px #0c0e13, 0 0 0 11px #1c2129, 0 40px 80px rgba(0, 0, 0, 0.7),
+    inset 0 0 120px rgba(110, 193, 255, 0.04);
+  overflow: hidden;
+  display: flex;
+}
+
+.mirror::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0) 22%,
+    rgba(255, 255, 255, 0) 78%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+}
+
+.left {
+  flex: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 22px 24px 24px;
+  scrollbar-width: none;
+}
+
+.screen::-webkit-scrollbar {
+  display: none;
+}
+
+.captionNote {
+  font-size: 11px;
+  color: var(--dim);
+  text-align: center;
+  max-width: 760px;
+  line-height: 1.5;
+}
+
+@media (max-width: 740px) {
+  .mirror {
+    height: auto;
+    flex-direction: column;
+  }
+}

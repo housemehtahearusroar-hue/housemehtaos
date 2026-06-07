@@ -1,0 +1,319 @@
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.time {
+  font-size: 50px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.ampm {
+  font-size: 17px;
+  color: var(--dim);
+  margin-left: 4px;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--dim);
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wx {
+  text-align: right;
+}
+
+.temp {
+  font-size: 30px;
+  font-weight: 200;
+}
+
+.cond {
+  font-size: 12px;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.range {
+  font-size: 11px;
+  color: var(--faint);
+  margin-top: 2px;
+}
+
+.greet {
+  margin: 16px 0 4px;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.greet b {
+  font-weight: 500;
+}
+
+.briefing {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+.hl {
+  color: var(--accent);
+}
+
+.w {
+  margin-top: 20px;
+}
+
+.wTitle {
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.meta {
+  margin-left: auto;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 11px;
+}
+
+.ev {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ev:last-child {
+  border-bottom: none;
+}
+
+.evTime {
+  font-size: 12px;
+  color: var(--dim);
+  width: 54px;
+  flex: none;
+  padding-top: 1px;
+}
+
+.bar {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 3px;
+  flex: none;
+}
+
+.evTitle {
+  font-size: 13.5px;
+}
+
+.who {
+  font-size: 11px;
+  color: var(--faint);
+  margin-top: 1px;
+}
+
+.whoDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 13.5px;
+}
+
+.check {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid var(--faint);
+  flex: none;
+  position: relative;
+}
+
+.checkDone {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.checkDone::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  font-size: 9px;
+  color: #04140a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rowDone span {
+  color: var(--faint);
+  text-decoration: line-through;
+}
+
+.tag {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--faint);
+  border: 1px solid var(--card-line);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.cols3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.chore {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 0;
+  font-size: 12.5px;
+}
+
+.choreName {
+  width: 44px;
+  color: var(--dim);
+  flex: none;
+}
+
+.starsOn {
+  color: var(--amber);
+}
+
+.starsOff {
+  color: var(--faint);
+}
+
+.pts {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.mini {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 13px;
+  padding: 11px 13px;
+}
+
+.lbl {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+
+.val {
+  font-size: 13.5px;
+}
+
+.sub {
+  font-size: 11px;
+  color: var(--dim);
+  margin-top: 3px;
+}
+
+.alert {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(245, 196, 81, 0.08);
+  border: 1px solid rgba(245, 196, 81, 0.25);
+  border-radius: 13px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+}
+
+.alert b {
+  color: var(--amber);
+}
+
+.strip {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.strip::-webkit-scrollbar {
+  display: none;
+}
+
+.pill {
+  flex: none;
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 11px;
+  padding: 8px 12px;
+  min-width: 92px;
+}
+
+.pillD {
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+.pillN {
+  font-size: 12.5px;
+  margin-top: 3px;
+}
+
+.pillX {
+  font-size: 10px;
+  color: var(--faint);
+  margin-top: 2px;
+}
+
+.note {
+  background: rgba(184, 155, 255, 0.07);
+  border: 1px solid rgba(184, 155, 255, 0.22);
+  border-radius: 13px;
+  padding: 11px 13px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.note + .note {
+  margin-top: 9px;
+}
+
+.noteFrom {
+  font-size: 11px;
+  color: var(--purple);
+  margin-bottom: 4px;
+}

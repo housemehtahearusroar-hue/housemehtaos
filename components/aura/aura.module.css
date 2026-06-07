@@ -1,0 +1,368 @@
+.right {
+  flex: 1;
+  min-width: 250px;
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(110, 193, 255, 0.05), rgba(110, 193, 255, 0) 40%);
+  display: flex;
+  flex-direction: column;
+}
+
+.auraHead {
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.orb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex: none;
+  background: radial-gradient(circle at 35% 30%, #aee0ff, #6ec1ff 45%, #3a7fd6 100%);
+  box-shadow: 0 0 14px rgba(110, 193, 255, 0.6);
+}
+
+.orbLive {
+  animation: orbpulse 1.4s infinite;
+}
+
+@keyframes orbpulse {
+  0% {
+    box-shadow: 0 0 10px rgba(110, 193, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(110, 193, 255, 0.95);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(110, 193, 255, 0.5);
+  }
+}
+
+.nm {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.st {
+  font-size: 10.5px;
+  color: var(--green);
+  margin-top: 1px;
+  letter-spacing: 0.04em;
+}
+
+.convo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 16px 8px;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.convo::-webkit-scrollbar {
+  display: none;
+}
+
+.empty {
+  margin: auto;
+  text-align: center;
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 20px;
+}
+
+.emptyBig {
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.bubble {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: rise 0.32s forwards;
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bubbleWho {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+  color: var(--faint);
+}
+
+.bubbleUser {
+  align-self: flex-end;
+  max-width: 88%;
+  background: rgba(110, 193, 255, 0.12);
+  border: 1px solid rgba(110, 193, 255, 0.28);
+  padding: 8px 12px;
+  border-radius: 14px 14px 4px 14px;
+}
+
+.bubbleUser .bubbleWho {
+  color: var(--accent);
+}
+
+.bubbleAura {
+  align-self: flex-start;
+  max-width: 92%;
+  color: var(--dim);
+}
+
+.bubbleAura .bubbleWho {
+  color: var(--green);
+}
+
+.act {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(95, 210, 138, 0.1);
+  border: 1px solid rgba(95, 210, 138, 0.3);
+  color: var(--green);
+  font-size: 11px;
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+.spin {
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid rgba(95, 210, 138, 0.4);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: sp 0.7s linear infinite;
+}
+
+.actDone .spin {
+  display: none;
+}
+
+@keyframes sp {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.showCard {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 13px;
+  overflow: hidden;
+  animation: rise 0.32s forwards;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.opt:last-child {
+  border-bottom: none;
+}
+
+.optIc {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex: none;
+}
+
+.optTi {
+  font-size: 13px;
+}
+
+.optSub {
+  font-size: 11px;
+  color: var(--faint);
+  margin-top: 1px;
+}
+
+.optRt {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--dim);
+  text-align: right;
+}
+
+.optPicked {
+  background: rgba(95, 210, 138, 0.12);
+}
+
+.optPicked .optTi {
+  color: var(--green);
+}
+
+.optDim {
+  opacity: 0.35;
+}
+
+.badge {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--green);
+  border: 1px solid rgba(95, 210, 138, 0.4);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.confirm {
+  background: rgba(95, 210, 138, 0.08);
+  border: 1px solid rgba(95, 210, 138, 0.28);
+  border-radius: 13px;
+  padding: 12px 14px;
+  animation: rise 0.32s forwards;
+}
+
+.confirmCh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 500;
+  margin-bottom: 7px;
+}
+
+.confirmLn {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+  display: flex;
+  gap: 7px;
+}
+
+.confirmK {
+  color: var(--faint);
+  min-width: 62px;
+}
+
+.dock {
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inwrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  padding: 5px 6px 5px 13px;
+  transition: 0.2s;
+}
+
+.inwrap:focus-within {
+  border-color: rgba(110, 193, 255, 0.5);
+}
+
+.inwrap input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 7px 0;
+}
+
+.inwrap input::placeholder {
+  color: var(--faint);
+}
+
+.send,
+.micbtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  border: none;
+}
+
+.send {
+  background: var(--accent);
+  color: #04101c;
+}
+
+.micbtn {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--dim);
+}
+
+.micbtnLive {
+  color: var(--accent);
+  box-shadow: 0 0 0 0 rgba(110, 193, 255, 0.5);
+  animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(110, 193, 255, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(110, 193, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(110, 193, 255, 0);
+  }
+}
+
+.hintchips {
+  display: flex;
+  gap: 6px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 10.5px;
+  color: var(--dim);
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 999px;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.chip:hover {
+  color: var(--fg);
+  border-color: rgba(110, 193, 255, 0.5);
+}
+
+@media (max-width: 740px) {
+  .right {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    min-height: 360px;
+  }
+}

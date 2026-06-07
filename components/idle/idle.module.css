@@ -1,0 +1,81 @@
+.idle {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  background: #000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 34px;
+}
+
+.idleShow {
+  display: flex;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.photoOn {
+  opacity: 1;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.iclock {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: auto;
+  margin-top: 10px;
+}
+
+.iclockT {
+  font-size: 64px;
+  font-weight: 200;
+}
+
+.iclockD {
+  font-size: 13px;
+  color: #cfd4dc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.cap {
+  position: relative;
+  z-index: 2;
+  color: #e8eaee;
+  font-size: 13px;
+}
+
+.capLoc {
+  color: #aeb4be;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.wakehint {
+  position: relative;
+  z-index: 2;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #8b94a3;
+}
