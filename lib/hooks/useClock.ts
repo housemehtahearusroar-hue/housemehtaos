@@ -3,15 +3,12 @@
 import { useEffect, useState } from 'react';
 
 export function useClock() {
-  const [now, setNow] = useState<Date | null>(null);
+  const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 10000);
     return () => clearInterval(id);
   }, []);
-
-  if (!now) return { hours: '--', minutes: '--', ampm: '', dateLine: '' };
 
   let h = now.getHours();
   const ap = h >= 12 ? 'PM' : 'AM';

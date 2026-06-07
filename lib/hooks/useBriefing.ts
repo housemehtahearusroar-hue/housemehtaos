@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function useBriefing(eventCount: number) {
   const [briefing, setBriefing] = useState('');
-  const [spoken, setSpoken] = useState(false);
+  const spokenRef = useRef(false);
 
   useEffect(() => {
     fetch('/api/briefing')
@@ -18,12 +18,12 @@ export function useBriefing(eventCount: number) {
   }, [eventCount]);
 
   useEffect(() => {
-    if (!briefing || spoken || typeof window === 'undefined') return;
+    if (!briefing || spokenRef.current || typeof window === 'undefined') return;
+    spokenRef.current = true;
     const utterance = new SpeechSynthesisUtterance(briefing);
     utterance.rate = 0.95;
     window.speechSynthesis.speak(utterance);
-    setSpoken(true);
-  }, [briefing, spoken]);
+  }, [briefing]);
 
   return briefing;
 }

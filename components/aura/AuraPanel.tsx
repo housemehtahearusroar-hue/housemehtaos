@@ -62,12 +62,15 @@ export function AuraPanel({
     },
   });
 
+  const isThinking = chatStatus === 'streaming' || chatStatus === 'submitted';
   useEffect(() => {
-    if (chatStatus === 'streaming' || chatStatus === 'submitted') {
+    if (!isThinking) return;
+    const id = requestAnimationFrame(() => {
       setStatus('Thinking…');
       setLive(true);
-    }
-  }, [chatStatus]);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isThinking]);
 
   useEffect(() => {
     convoRef.current?.scrollTo({ top: convoRef.current.scrollHeight });
