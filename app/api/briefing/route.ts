@@ -1,9 +1,13 @@
 import { generateText } from 'ai';
 import { chatModel } from '@/lib/ai/gemini';
+import { generateGeminiText } from '@/lib/ai/gemini-rest';
 import { createServerClient } from '@/lib/supabase/server';
 import { DEFAULT_FAMILY_ID } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
+
+const SYSTEM_PROMPT =
+  'Write a one-sentence morning briefing for a family smart mirror. Be warm and concise. Highlight event count, key times, and any open todos. Use plain text, no markdown.';
 
 export async function GET() {
   const supabase = createServerClient();
@@ -43,25 +47,38 @@ export async function GET() {
   const eventCount = events?.length ?? 0;
   const context = JSON.stringify({ events, openTodos: todos });
 
+  let text: string | undefined;
+  let geminiError: string | undefined;
+
   try {
-    const { text } = await generateText({
+    const result = await generateText({
       model: chatModel,
-      system:
-        'Write a one-sentence morning briefing for a family smart mirror. Be warm and concise. Highlight event count, key times, and any open todos. Use plain text, no markdown.',
+      system: SYSTEM_PROMPT,
       prompt: context,
     });
+    text = result.text;
+  } catch (sdkErr) {
+    geminiError = sdkErr instanceof Error ? sdkErr.message : String(sdkErr);
+    try {
+      text = await generateGeminiText(SYSTEM_PROMPT, context);
+    } catch (restErr) {
+      geminiError = restErr instanceof Error ? restErr.message : String(restErr);
+    }
+  }
 
+  if (text) {
     return Response.json({
       briefing: text,
       eventCount,
       todoCount: todoCount ?? 0,
     });
-  } catch {
-    return Response.json({
-      briefing: `Busy one today — ${eventCount} events on the calendar and ${todoCount ?? 0} open to-dos.`,
-      eventCount,
-      todoCount: todoCount ?? 0,
-      mock: true,
-    });
   }
+
+  return Response.json({
+    briefing: `Busy one today — ${eventCount} events on the calendar and ${todoCount ?? 0} open to-dos.`,
+    eventCount,
+    todoCount: todoCount ?? 0,
+    mock: true,
+    geminiError,
+  });
 }
