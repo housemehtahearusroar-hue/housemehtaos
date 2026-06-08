@@ -60,7 +60,7 @@ chromium --kiosk --autoplay-policy=no-user-gesture-required http://localhost:300
 1. Push to GitHub
 2. Import repo in Vercel
 3. Add all env vars from `.env.example`
-4. Cron job syncs Google Calendar every 15 min (`vercel.json`)
+4. Cron job syncs Google Calendar once daily at 6:00 UTC (`vercel.json`). Hobby plan allows max one run per day; upgrade to Pro for more frequent sync.
 
 ## Architecture
 
