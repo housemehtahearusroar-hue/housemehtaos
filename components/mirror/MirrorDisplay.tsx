@@ -1,5 +1,6 @@
 'use client';
 
+import { formatEventDay, isSameLocalDay } from '@/lib/dates/calendar';
 import { useClock } from '@/lib/hooks/useClock';
 import { useWeather } from '@/lib/hooks/useWeather';
 import { useCommute } from '@/lib/hooks/useCommute';
@@ -56,6 +57,8 @@ export function MirrorDisplay({
   const weather = useWeather();
   const commute = useCommute();
   const briefing = useBriefing(events.length);
+  const todayEvents = events.filter((ev) => isSameLocalDay(ev.starts_at));
+  const weekEvents = events.filter((ev) => !isSameLocalDay(ev.starts_at));
 
   return (
     <div className={styles.screen}>
@@ -91,9 +94,12 @@ export function MirrorDisplay({
 
       <div className={styles.w}>
         <div className={styles.wTitle}>
-          📅 Today<span className={styles.meta}>{events.length} events</span>
+          📅 Today<span className={styles.meta}>{todayEvents.length} events</span>
         </div>
-        {events.map((ev) => (
+        {todayEvents.length === 0 && (
+          <div className={styles.evEmpty}>Nothing on the calendar today.</div>
+        )}
+        {todayEvents.map((ev) => (
           <div key={ev.id} className={styles.ev}>
             <div className={styles.evTime}>{formatEventTime(ev.starts_at)}</div>
             <div
@@ -116,6 +122,37 @@ export function MirrorDisplay({
           </div>
         ))}
       </div>
+
+      {weekEvents.length > 0 && (
+        <div className={styles.w}>
+          <div className={styles.wTitle}>
+            📅 This week<span className={styles.meta}>{weekEvents.length} events</span>
+          </div>
+          {weekEvents.map((ev) => (
+            <div key={ev.id} className={styles.ev}>
+              <div className={styles.evTime}>{formatEventTime(ev.starts_at)}</div>
+              <div
+                className={styles.bar}
+                style={{ background: ev.family_members?.color ?? 'var(--accent)' }}
+              />
+              <div>
+                <div className={styles.evDay}>{formatEventDay(ev.starts_at)}</div>
+                <div className={styles.evTitle}>{ev.title}</div>
+                <div className={styles.who}>
+                  {ev.family_members && (
+                    <span
+                      className={styles.whoDot}
+                      style={{ background: ev.family_members.color }}
+                    />
+                  )}
+                  {ev.family_members?.name}
+                  {ev.location ? ` · ${ev.location}` : ''}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className={`${styles.w} ${styles.cols}`}>
         <div>

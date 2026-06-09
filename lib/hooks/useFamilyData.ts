@@ -15,6 +15,7 @@ import type {
   Todo,
   UpcomingItem,
 } from '@/lib/types';
+import { endOfLocalWeek, startOfLocalDay } from '@/lib/dates/calendar';
 import {
   MOCK_CHORES,
   MOCK_COMMUTE,
@@ -30,6 +31,18 @@ import {
 
 function hasSupabase() {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
+
+function calendarQuery(supabase: ReturnType<typeof createBrowserClient>, familyId: string) {
+  const start = startOfLocalDay().toISOString();
+  const end = endOfLocalWeek().toISOString();
+  return supabase
+    .from('calendar_events')
+    .select('*, family_members(*)')
+    .eq('family_id', familyId)
+    .gte('starts_at', start)
+    .lt('starts_at', end)
+    .order('starts_at');
 }
 
 export function useFamilyData() {
@@ -64,12 +77,7 @@ export function useFamilyData() {
         upcomingRes,
         photoRes,
       ] = await Promise.all([
-        supabase
-          .from('calendar_events')
-          .select('*, family_members(*)')
-          .eq('family_id', familyId)
-          .gte('starts_at', new Date().toISOString().split('T')[0])
-          .order('starts_at'),
+        calendarQuery(supabase, familyId),
         supabase.from('todos').select('*, family_members(*)').eq('family_id', familyId).order('created_at'),
         supabase.from('shopping_items').select('*').eq('family_id', familyId).eq('done', false).order('created_at'),
         supabase
@@ -84,7 +92,7 @@ export function useFamilyData() {
         supabase.from('slideshow_photos').select('*').eq('family_id', familyId).order('sort_order'),
       ]);
 
-      if (evRes.data?.length) setEvents(evRes.data as CalendarEvent[]);
+      if (evRes.data) setEvents(evRes.data as CalendarEvent[]);
       if (todoRes.data?.length) setTodos(todoRes.data as Todo[]);
       if (shopRes.data?.length) setShopping(shopRes.data as ShoppingItem[]);
       if (choreRes.data?.length) setChores(choreRes.data as ChorePoint[]);
@@ -131,11 +139,9 @@ export function useFamilyData() {
           .then(({ data }) => data && setNotes(data as FamilyNote[]));
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'calendar_events' }, () => {
-        supabase
-          .from('calendar_events')
-          .select('*, family_members(*)')
-          .eq('family_id', familyId)
-          .then(({ data }) => data && setEvents(data as CalendarEvent[]));
+        calendarQuery(supabase, familyId).then(({ data }) => {
+          if (data) setEvents(data as CalendarEvent[]);
+        });
       })
       .subscribe();
 

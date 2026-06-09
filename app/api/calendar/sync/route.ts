@@ -12,7 +12,9 @@ export async function GET(req: Request) {
   }
 
   const supabase = createServerClient();
-  if (!supabase) return NextResponse.json({ synced: 0, mock: true });
+  if (!supabase) {
+    return NextResponse.json({ synced: 0, mock: true, error: 'Supabase not configured' });
+  }
   const result = await syncCalendarToSupabase(DEFAULT_FAMILY_ID, supabase);
   return NextResponse.json(result);
 }

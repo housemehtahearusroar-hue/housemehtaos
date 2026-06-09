@@ -4,7 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { initPorcupine } from '@/lib/voice/porcupine';
-import { startHotwordListener, startListening, isSpeechSupported } from '@/lib/voice/speech';
+import {
+  createHotwordListener,
+  isSpeechSupported,
+  speechErrorMessage,
+  startListening,
+  type HotwordController,
+} from '@/lib/voice/speech';
 import styles from './aura.module.css';
 
 interface UIItem {
@@ -33,11 +39,15 @@ export function AuraPanel({
   onWake?: () => void;
   demoRef?: React.MutableRefObject<((kind: 'dentist' | 'dinner' | 'shop') => void) | null>;
 }) {
-  const [status, setStatus] = useState('Ready · say "Hey Aura"');
+  const [status, setStatus] = useState(
+    () => (isSpeechSupported() ? 'Ready · tap 🎙 or say "Hey Aura"' : 'Type below · voice works best in Chrome')
+  );
   const [live, setLive] = useState(false);
   const [input, setInput] = useState('');
   const [uiItems, setUiItems] = useState<UIItem[]>([]);
   const convoRef = useRef<HTMLDivElement>(null);
+  const hotwordRef = useRef<HotwordController | null>(null);
+  const listenStopRef = useRef<(() => void) | null>(null);
 
   const { messages, sendMessage, status: chatStatus } = useChat({
     transport: new DefaultChatTransport({ api: '/api/aura' }),
@@ -248,19 +258,31 @@ export function AuraPanel({
   );
 
   const beginListening = useCallback(() => {
-    if (!isSpeechSupported()) return;
+    if (!isSpeechSupported()) {
+      setStatus(speechErrorMessage('not-supported'));
+      return;
+    }
+
+    listenStopRef.current?.();
+    hotwordRef.current?.pause();
+
     setStatus('Listening…');
     setLive(true);
-    startListening(
+
+    listenStopRef.current = startListening(
       (transcript, isFinal) => {
         setInput(transcript);
         if (isFinal && transcript.trim()) {
           route(transcript.trim());
         }
       },
-      () => {
-        setLive(false);
-        setStatus('Ready · say "Hey Aura"');
+      {
+        onEnd: (error) => {
+          listenStopRef.current = null;
+          setLive(false);
+          hotwordRef.current?.resume();
+          setStatus(speechErrorMessage(error));
+        },
       }
     );
   }, [route]);
@@ -270,23 +292,26 @@ export function AuraPanel({
   }, [demoRef, runDemo]);
 
   useEffect(() => {
-    let cleanup = () => {};
-    const setup = async () => {
-      const porcupineCleanup = await initPorcupine(() => {
-        onWake?.();
-        beginListening();
-      });
-      const speechCleanup = startHotwordListener(() => {
-        onWake?.();
-        beginListening();
-      });
-      cleanup = () => {
-        porcupineCleanup();
-        speechCleanup();
-      };
+    let porcupineCleanup = () => {};
+    const hotword = createHotwordListener(() => {
+      onWake?.();
+      beginListening();
+    });
+    hotwordRef.current = hotword;
+
+    void initPorcupine(() => {
+      onWake?.();
+      beginListening();
+    }).then((cleanup) => {
+      porcupineCleanup = cleanup;
+    });
+
+    return () => {
+      listenStopRef.current?.();
+      hotword.dispose();
+      hotwordRef.current = null;
+      porcupineCleanup();
     };
-    setup();
-    return () => cleanup();
   }, [beginListening, onWake]);
 
   const empty = uiItems.length === 0 && messages.length === 0;
@@ -404,8 +429,13 @@ export function AuraPanel({
           <button
             className={`${styles.micbtn} ${live ? styles.micbtnLive : ''}`}
             onClick={beginListening}
-            title="Voice"
+            title={
+              isSpeechSupported()
+                ? 'Tap to speak'
+                : 'Voice not supported in this browser — use Chrome'
+            }
             type="button"
+            aria-label="Start voice input"
           >
             🎙
           </button>
