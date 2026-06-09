@@ -112,6 +112,55 @@ export async function createCalendarEvent(params: {
   return { ok: true, eventId: res.data.id, htmlLink: res.data.htmlLink };
 }
 
+async function saveSyncedEvent(
+  supabase: SupabaseClient,
+  familyId: string,
+  row: {
+    google_event_id: string;
+    title: string;
+    location: string | null;
+    starts_at: string;
+    ends_at: string | null;
+  }
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { error: upsertError } = await supabase.from('calendar_events').upsert(
+    { family_id: familyId, ...row },
+    { onConflict: 'google_event_id' }
+  );
+
+  if (!upsertError) return { ok: true };
+
+  // Fallback when 002 migration did not add UNIQUE (column already existed from 001)
+  if (!upsertError.message.includes('ON CONFLICT')) {
+    return { ok: false, error: upsertError.message };
+  }
+
+  const { data: existing } = await supabase
+    .from('calendar_events')
+    .select('id')
+    .eq('google_event_id', row.google_event_id)
+    .maybeSingle();
+
+  if (existing?.id) {
+    const { error } = await supabase
+      .from('calendar_events')
+      .update({
+        title: row.title,
+        location: row.location,
+        starts_at: row.starts_at,
+        ends_at: row.ends_at,
+      })
+      .eq('id', existing.id);
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  const { error } = await supabase.from('calendar_events').insert({
+    family_id: familyId,
+    ...row,
+  });
+  return error ? { ok: false, error: error.message } : { ok: true };
+}
+
 export async function syncCalendarToSupabase(familyId: string, supabase: SupabaseClient) {
   const calendarId = process.env.GOOGLE_CALENDAR_ID ?? 'primary';
 
@@ -150,25 +199,21 @@ export async function syncCalendarToSupabase(familyId: string, supabase: Supabas
         continue;
       }
 
-      const { error } = await supabase.from('calendar_events').upsert(
-        {
-          family_id: familyId,
-          google_event_id: ev.id,
-          title: ev.summary,
-          location: ev.location ?? null,
-          starts_at: startsAt,
-          ends_at: eventEndIso(ev),
-        },
-        { onConflict: 'google_event_id' }
-      );
+      const saved = await saveSyncedEvent(supabase, familyId, {
+        google_event_id: ev.id,
+        title: ev.summary,
+        location: ev.location ?? null,
+        starts_at: startsAt,
+        ends_at: eventEndIso(ev),
+      });
 
-      if (error) {
+      if (!saved.ok) {
         return {
           synced,
           configured: true,
           googleEventCount: events.length,
           skipped,
-          error: `Supabase upsert failed: ${error.message}`,
+          error: `Supabase save failed: ${saved.error}`,
         };
       }
 
